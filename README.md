@@ -222,24 +222,37 @@ The frontend will provide role-specific interfaces. The Express backend will han
 
 Medical documents will require private storage and controlled access; they should not be exposed through unrestricted public file URLs.
 
-An architecture diagram and database model will be added after the design is finalized.
+
+The architecture diagram below illustrates the planned application components and their interactions.
+
+![VitalSync System Architecture](doc/VitalSync-Architecture.drawio.png)
+
 
 ## 10. Proposed Data Model
 
 The following collections are preliminary and will be refined during database design.
 
+
 | Collection | Purpose |
 |---|---|
 | `users` | Login identity, email verification status, and account role |
 | `patients` | Patient demographics and unique hospital Patient ID |
-| `doctors` | Doctor profiles and scheduling configuration |
 | `appointments` | Booking details, status, timing, and patient/doctor references |
 | `consultations` | Consultation notes, treatment details, and follow-up information |
 | `prescriptions` | Doctor-created prescription records |
 | `medical_documents` | Metadata and access information for uploaded medical files |
-| `audit_logs` | Important system events and traceability |
+| `doctor_availability` | Doctor availability dates and time slots |
+
 
 The exact fields, references, validation rules, and indexes will be defined in the ERD/data-modeling stage. The `users` collection and `patients` collection will remain conceptually separate so that a walk-in patient can have a hospital record without an online account.
+
+
+### ERD — Proposed Data Model
+
+The following diagram presents the preliminary data model for VitalSync. It uses a relational-style diagram to represent the planned entities and their relationships; the actual database implementation will use MongoDB collections and document references.
+
+![VitalSync Proposed Data Model](docs/VitalSync-Database-ERD.png)
+
 
 ## 11. UI/UX Design
 
