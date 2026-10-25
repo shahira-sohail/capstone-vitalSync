@@ -225,7 +225,7 @@ Medical documents will require private storage and controlled access; they shoul
 
 The architecture diagram below illustrates the planned application components and their interactions.
 
-![VitalSync System Architecture](doc/VitalSync-Architecture.drawio.png)
+![VitalSync System Architecture](docs/VitalSync-Architecture.drawio.png)
 
 
 ## 10. Proposed Data Model
