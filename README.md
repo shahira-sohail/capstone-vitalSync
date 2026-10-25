@@ -273,7 +273,7 @@ Planned design principles:
 2. **Main Dashboard:** A role-specific overview with relevant actions and information.
 3. **Data Details:** Patient details and the appropriate appointment or clinical-record view.
 
-**Figma link:** To be added after the designs are created and shared.
+**Figma link:** [View VitalSync UI Design](https://www.figma.com/design/RRfDffynKCDUCagvfzQ9v2/VitalSync---UI-Design?node-id=0-1&t=jRqihg7dzEbzvJsA-1)
 
 ## 12. Capstone Deliverables
 
