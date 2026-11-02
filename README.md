@@ -2,6 +2,11 @@
 
 > A full-stack Electronic Health Record (EHR) and hospital appointment management system designed for a single hospital or clinic.
 
+## Live URL 
+**Frontend** : https://capstonevitalsync.vercel.app
+
+**Backend** : https://capstone-vitalsync.onrender.com
+
 ## 1. Project Overview
 
 **VitalSync** is a web-based healthcare management application that helps a hospital manage patient registration, appointments, consultation records, prescriptions, and follow-up visits through a centralized system.
@@ -44,6 +49,7 @@ The following stack is proposed for implementation and has not yet been verified
 | Architecture Diagrams | Draw.io or dbdiagram.io |
 
 External email verification and delivery services will be selected based on free-tier availability, usage limits, and implementation requirements.
+
 
 ## 5. User Roles and Permissions
 
@@ -298,7 +304,78 @@ These deliverables will be completed during the planning phase before functional
 
 The roadmap is proposed; completion will be tracked as implementation progresses.
 
-## 14. Success Criteria
+## 14. Sprint 14
+
+- **Development Status:** Authentication MVP implemented and deployed
+- **Repository:** https://github.com/shahira-sohail/capstone-vitalSync
+
+| Layer | Implemented Technology |
+|---|---|
+| Frontend | React.js with Vite |
+| Styling | CSS |
+| Backend | Node.js |
+| API Framework | Express.js |
+| Database | MongoDB Atlas |
+| ODM | Mongoose |
+| Authentication | JWT |
+| Password Security | bcryptjs |
+| API Testing | Postman |
+| Version Control | Git and GitHub |
+| Deployment | Vercel and Render |
+| UI Design | Figma |
+| Architecture Diagrams | Draw.io |
+
+## Implemented Features — Authentication MVP
+
+The initial authentication MVP has been implemented and deployed.
+
+### Backend
+- User registration API.
+- User login API.
+- Password hashing using bcryptjs.
+- JWT-based authentication.
+- Authentication middleware for protected routes.
+- MongoDB Atlas integration.
+- Protected dashboard API endpoint.
+
+### Frontend
+- Responsive login page.
+- User registration page.
+- React Router navigation.
+- Backend API integration.
+- JWT storage using localStorage.
+- Protected dashboard routing.
+- Token verification through the backend.
+- Logout functionality.
+
+### Deployment
+- Frontend deployed on Vercel.
+- Backend deployed on Render.
+- Production database hosted on MongoDB Atlas.
+
+### Current Implementation Scope
+
+The current working MVP covers authentication and protected dashboard access. Patient management, appointment scheduling, consultations, prescriptions, and role-based authorization remain part of the planned development scope.
+
+## Development Roadmap
+
+1. Requirements and business rules — Completed.
+2. Initial UI design and architecture documentation — Completed.
+3. Database schema planning — Completed.
+4. Authentication backend implementation — Completed.
+5. React frontend authentication integration — Completed.
+6. Production deployment of backend and frontend — Completed.
+7. Production API and authentication testing — Completed.
+8. Role-based authentication and authorization — Pending.
+9. Patient registration and patient record management — Pending.
+10. Appointment booking and scheduling — Pending.
+11. Consultation and prescription workflows — Pending.
+12. Medical document management — Pending.
+13. Audit logging and comprehensive testing — Pending.
+
+The roadmap will be updated as implementation progresses.
+
+## 15. Success Criteria
 
 The initial version will be considered functionally successful when:
 
@@ -311,8 +388,9 @@ The initial version will be considered functionally successful when:
 - Important changes are traceable through audit records.
 - The application passes tests using synthetic patient data.
 
-## 15. Disclaimer
+## 16. Disclaimer
 
 VitalSync is an educational capstone project intended to demonstrate full-stack application development and healthcare workflow planning. It is not a substitute for professional medical systems, clinical judgment, or a production-ready EHR platform.
 
 No real patient data should be used in the development or demonstration environment.
+
