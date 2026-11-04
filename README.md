@@ -7,6 +7,8 @@
 
 **Backend** : https://capstone-vitalsync.onrender.com
 
+![Screenshots](Sprint14ss)
+
 ## 1. Project Overview
 
 **VitalSync** is a web-based healthcare management application that helps a hospital manage patient registration, appointments, consultation records, prescriptions, and follow-up visits through a centralized system.
