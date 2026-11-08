@@ -6,6 +6,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -13,8 +14,15 @@ app.use(cors({
     ],
 }));
 
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.originalUrl}`);
+    next();
+});
+
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/protected", require("./routes/protectedRoutes"));
+app.use("/api/appointments", require("./routes/appointmentRoutes"));
+app.use("/api/payments", require("./routes/paymentRoutes"));
 
 app.get("/", (req, res) => {
   res.send("VitalSync backend is running");

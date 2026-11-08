@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PaymentResult from "./pages/PaymentResult";
 
 function App() {
     return (
@@ -13,6 +14,10 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             <Route path="/register" element={<Register />} />
+            <Route
+                path="/payment-result"
+                element={<PaymentResult />}
+            />
 
             <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<Dashboard />} />
