@@ -396,3 +396,102 @@ VitalSync is an educational capstone project intended to demonstrate full-stack 
 
 No real patient data should be used in the development or demonstration environment.
 
+## Sprint 14 – REST API CRUD Finalization & Gateway Monetization
+
+### Engineering Objective
+
+Finalize secure REST API controllers, implement data ownership validation, connect React frontend with backend CRUD operations, and integrate a third-party payment gateway for test-mode monetization.
+
+---
+
+### Phase 1 – Secure Backend CRUD (P0)
+
+**Primary Resource:** Appointments
+
+Implemented JWT-protected REST API endpoints for appointment management.
+
+**CRUD Operations:**
+
+- **POST** `/api/appointments` – Create a new appointment.
+- **GET** `/api/appointments` – Retrieve appointments belonging to the authenticated user.
+- **PUT** `/api/appointments/:id` – Update an existing appointment.
+- **DELETE** `/api/appointments/:id` – Delete an appointment.
+
+**Security and Data Ownership:**
+
+- Protected appointment routes using JWT authentication middleware.
+- Extracted authenticated user identity from the decoded JWT.
+- Associated appointment records with their owning user.
+- Applied ownership validation to prevent users from accessing or modifying appointments belonging to other users.
+- Used appropriate HTTP status codes for successful operations, missing resources, and unauthorized access.
+
+---
+
+### Phase 2 – Client Integration & State Management (P1)
+
+Connected the React frontend to the appointment REST APIs.
+
+**Implemented Features:**
+
+- Integrated frontend services for appointment API communication.
+- Connected appointment creation, retrieval, updating, and deletion with backend endpoints.
+- Used React state management to keep appointment data synchronized with the UI.
+- Implemented appointment management through the dashboard without requiring full-page reloads.
+- Integrated authenticated API requests using JWT tokens.
+
+**Frontend Integration:**
+- React
+- Vite
+- JavaScript
+- Fetch API
+- React Hooks (`useState`, `useEffect`)
+
+---
+
+### Phase 3 – Gateway Monetization (P2)
+
+**Payment Gateway:** PayU Hosted Checkout (UAT / Test Mode)
+
+The original assignment specified Stripe Test Mode. PayU was used as an alternative test-mode gateway because of payment gateway onboarding constraints. This substitution remains subject to project/mentor approval.
+
+**Implemented Features:**
+
+- Added a VitalSync Pro test subscription payment trigger.
+- Configured the test payment amount of ₹499.
+- Generated unique transaction IDs for payment attempts.
+- Implemented SHA-512 payment request hash generation.
+- Created and stored payment records in MongoDB.
+- Integrated PayU Hosted Checkout redirection.
+- Configured success and failure callback endpoints.
+- Implemented callback hash validation.
+- Added transaction amount and transaction-detail verification.
+- Integrated PayU Verify Payment API.
+- Updated payment status in MongoDB after gateway verification.
+- Implemented an authenticated payment status endpoint.
+- Created a frontend payment result page.
+
+**Payment Transaction Flow:**
+
+1. Authenticated user initiates a test payment.
+2. Backend generates a transaction ID and creates a Pending payment record.
+3. User is redirected to PayU Hosted Checkout.
+4. PayU returns the transaction response to the backend callback.
+5. Backend validates the callback and verifies the transaction with PayU.
+6. Verified transaction status is saved in MongoDB.
+7. User is redirected to the payment result page.
+
+---
+
+### Deployment
+
+- **Frontend:** https://capstonevitalsync.vercel.app
+- **Backend:** https://capstone-vitalsync.onrender.com
+- **Database:** MongoDB Atlas
+
+### Notes
+
+- Payment testing was performed in PayU UAT mode; no real-money transaction was made.
+- PayU is an alternative to the originally specified Stripe integration and requires mentor/project approval.
+- Payment success is verified through the gateway response and the corresponding MongoDB transaction record.
+- Additional subscription entitlement activation and failure-scenario testing are outside the currently verified completion scope.
+
