@@ -306,7 +306,7 @@ These deliverables will be completed during the planning phase before functional
 
 The roadmap is proposed; completion will be tracked as implementation progresses.
 
-## 14. Sprint 14
+## 14. Sprint 15
 
 - **Development Status:** Authentication MVP implemented and deployed
 - **Repository:** https://github.com/shahira-sohail/capstone-vitalSync
