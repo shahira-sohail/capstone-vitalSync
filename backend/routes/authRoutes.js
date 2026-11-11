@@ -4,21 +4,23 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
+const validateRequest = require("../middleware/validateRequest");
 
-router.post("/register", async (req, res) => {
+const {
+    registerSchema,
+    loginSchema,
+} = require("../validators/authValidator");
+
+router.post("/register", validateRequest(registerSchema), async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const normalizedEmail = email?.trim().toLowerCase();
-    if(!name?.trim() || !normalizedEmail || !password){
-        return res.status(400).json({
-            message: "All fields are required",
-        });
-    }
 
     const existingUser = await User.findOne({ email: normalizedEmail });
 
     if (existingUser) {
       return res.status(409).json({
+        success: false,
         message: "Email already registered",
       });
     }
@@ -32,30 +34,27 @@ router.post("/register", async (req, res) => {
     await newUser.save();
 
     res.status(201).json({
+      success: true,
       message: "Registration successful",
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Registration failed",
       error: error.message,
     });
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateRequest(loginSchema), async (req, res) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = email?.trim().toLowerCase();
 
-    if (!normalizedEmail || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
-    }
-
     const user = await User.findOne({email: normalizedEmail});
     if(!user){
         return res.status(401).json({
+            success: false,
             message: "Invalid email or password",
         });
     }
@@ -63,6 +62,7 @@ router.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if(!isPasswordValid){
         return res.status(401).json({
+            success: false,
             message: "Invalid email or password",
         });
     }
@@ -74,6 +74,7 @@ router.post("/login", async (req, res) => {
     );
 
     res.status(200).json({
+        success: true,
         message: "Login successful",
         token,
         user: {
@@ -86,6 +87,7 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({
+      success: false,
       message: "Login failed",
     });
   }

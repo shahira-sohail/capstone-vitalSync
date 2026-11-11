@@ -5,6 +5,10 @@ const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const {
+    notFound,
+    errorHandler,
+} = require("./middleware/errorMiddleware");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
@@ -36,8 +40,15 @@ async function startServer(){
             console.log(`Server is running on port ${PORT}`);
         });
     }catch(error){
-        console.error("MongoDB connection failed:", error.message);
+        console.error("MongoDB connection failed:", error);
+        process.exit(1);
     }
 }
+
+// Handle unknown routes
+app.use(notFound);
+
+// Centralized error handler
+app.use(errorHandler);
 
 startServer();

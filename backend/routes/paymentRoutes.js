@@ -12,6 +12,11 @@ const {
     verifyPaymentWithPayU,
 } = require("../utils/payu");
 const Payment = require("../models/Payment");
+const validateRequest = require("../middleware/validateRequest");
+
+const {
+    paymentCallbackSchema,
+} = require("../validators/paymentValidator");
 
 router.post("/initiate", authMiddleware, async (req, res) => {
     try {
@@ -19,6 +24,7 @@ router.post("/initiate", authMiddleware, async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
+                success: false,
                 message: "User not found",
             });
         }
@@ -28,6 +34,7 @@ router.post("/initiate", authMiddleware, async (req, res) => {
 
         if (!key || !salt) {
             return res.status(500).json({
+                success: false,
                 message: "PayU credentials are not configured",
             });
         }
@@ -59,6 +66,7 @@ router.post("/initiate", authMiddleware, async (req, res) => {
         });
 
         return res.status(200).json({
+            success: true,
             message: "Payment initiated successfully",
             paymentUrl: process.env.PAYU_BASE_URL + "/_payment",
             paymentDetails: {
@@ -73,12 +81,13 @@ router.post("/initiate", authMiddleware, async (req, res) => {
         console.error("PayU initiation error:", error);
 
         return res.status(500).json({
+            success: false,
             message: "Unable to initiate payment",
         });
     }
 });
 
-router.post("/callback", async (req, res) => {
+router.post("/callback", validateRequest(paymentCallbackSchema), async (req, res) => {
     try {
         const response = req.body;
 
@@ -92,7 +101,10 @@ router.post("/callback", async (req, res) => {
             response.key !== key ||
             !verifyPaymentHash(response, salt)
         ) {
-            return res.status(400).send("Invalid payment response");
+           return res.status(400).json({
+                success: false,
+                message: "Invalid payment response",
+            });
         }
 
         // 2. Find the original payment
@@ -101,7 +113,10 @@ router.post("/callback", async (req, res) => {
         });
 
         if (!payment) {
-            return res.status(404).send("Payment not found");
+            return res.status(404).json({
+                success: false,
+                message: "Payment not found",
+            });
         }
 
         if(payment.status === "Success"){
@@ -120,7 +135,10 @@ router.post("/callback", async (req, res) => {
             !Number.isFinite(callbackAmount) ||
             callbackAmount !== savedAmount
         ) {
-            return res.status(400).send("Payment amount mismatch");
+            return res.status(400).json({
+                success: false,
+                message: "Payment amount mismatch",
+            })
         }
 
         // 4. Verify transaction directly with PayU
@@ -133,7 +151,10 @@ router.post("/callback", async (req, res) => {
             verification.status !== 1 ||
             !transaction
         ) {
-            return res.status(502).send("Unable to verify payment with PayU");
+            return res.status(502).json({
+                success: false,
+                message: "Unable to verify payment with PayU",
+            });
         }
 
         // 5. Reconcile the verified transaction
@@ -144,7 +165,10 @@ router.post("/callback", async (req, res) => {
             transaction.txnid !== payment.txnid ||
             transaction.productinfo !== payment.productinfo
         ) {
-            return res.status(400).send("Verified transaction mismatch");
+            return res.status(400).json({
+                success: false,
+                message: "Verified transaction mismatch",
+            })
         }
 
         const verifiedStatus = transaction.status?.toLowerCase();
@@ -190,8 +214,11 @@ router.post("/callback", async (req, res) => {
         );
 
     } catch (error) {
-        console.error("PayU callback error:", error.message);
-        return res.status(500).send("Payment verification failed");
+        console.error("PayU callback error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Payment verification failed",
+        });
     }
 });
 
@@ -204,11 +231,13 @@ router.get("/:txnid/status", authMiddleware, async (req, res) => {
 
         if (!payment) {
             return res.status(404).json({
+                success: false,
                 message: "Payment not found",
             });
         }
 
         return res.status(200).json({
+            success: true,
             txnid: payment.txnid,
             amount: payment.amount,
             productinfo: payment.productinfo,
@@ -221,6 +250,7 @@ router.get("/:txnid/status", authMiddleware, async (req, res) => {
         console.error("Payment status error:", error.message);
 
         return res.status(500).json({
+            success: false,
             message: "Unable to fetch payment status",
         });
     }
