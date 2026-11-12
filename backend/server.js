@@ -19,7 +19,6 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.originalUrl}`);
     next();
 });
 
@@ -27,6 +26,7 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/protected", require("./routes/protectedRoutes"));
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
 app.use("/api/payments", require("./routes/paymentRoutes"));
+app.use("/api/ai", require("./routes/aiRoutes"));
 
 app.get("/", (req, res) => {
   res.send("VitalSync backend is running");
@@ -35,9 +35,7 @@ app.get("/", (req, res) => {
 async function startServer(){
     try{
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log("MongoDB connected successfully");
         app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
         });
     }catch(error){
         console.error("MongoDB connection failed:", error);

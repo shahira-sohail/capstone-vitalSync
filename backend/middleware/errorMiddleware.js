@@ -28,7 +28,7 @@ const errorHandler = (err, req, res, next) => {
         success: false,
         message: statusCode >= 500
             ? "Internal Server Error"
-            : err.message || "Request failed",
+            : "Request failed",
     });
 };
 

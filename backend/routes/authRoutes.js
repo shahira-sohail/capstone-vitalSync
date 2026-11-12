@@ -10,6 +10,7 @@ const {
     registerSchema,
     loginSchema,
 } = require("../validators/authValidator");
+const authRateLimiter = require("../middleware/authRateLimiter");
 
 router.post("/register", validateRequest(registerSchema), async (req, res) => {
   try {
@@ -41,12 +42,11 @@ router.post("/register", validateRequest(registerSchema), async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Registration failed",
-      error: error.message,
     });
   }
 });
 
-router.post("/login", validateRequest(loginSchema), async (req, res) => {
+router.post("/login",authRateLimiter, validateRequest(loginSchema), async (req, res) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = email?.trim().toLowerCase();
