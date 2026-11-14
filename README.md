@@ -495,3 +495,224 @@ The original assignment specified Stripe Test Mode. PayU was used as an alternat
 - Payment success is verified through the gateway response and the corresponding MongoDB transaction record.
 - Additional subscription entitlement activation and failure-scenario testing are outside the currently verified completion scope.
 
+# Sprint 16 – AI Endpoint Architecture & Backend Hardening
+
+## Overview
+
+Sprint 16 focused on architecting a secure, server-side AI microservice and strengthening the VitalSync REST API through standardized error handling, strict payload validation, rate limiting, and production code sanitization.
+
+The primary objective was to improve backend reliability, prevent invalid requests from reaching the database, securely integrate Gemini AI, and protect critical API endpoints from excessive requests.
+
+---
+
+## Phase 1: Error Handling & Payload Validation (P0)
+
+Implemented centralized error handling and strict request validation to improve API reliability and prevent malformed data from entering the database.
+
+### Key Implementations
+
+- Integrated **Zod** for strict request payload validation.
+- Created reusable request validation middleware.
+- Implemented validation schemas for:
+  - Authentication
+  - Appointments
+  - Payments
+  - AI requests
+- Added centralized error-handling middleware.
+- Wrapped asynchronous route handlers in `try/catch` blocks.
+- Standardized API error responses with appropriate HTTP status codes:
+  - `400 Bad Request` – Invalid request payload.
+  - `401 Unauthorized` – Authentication failure.
+  - `404 Not Found` – Requested API route does not exist.
+  - `500 Internal Server Error` – Unexpected server-side errors.
+- Prevented internal error details from being exposed in production responses.
+- Rejected unexpected request fields using strict schema validation.
+
+### Validation Examples
+
+| Test Scenario | Expected Result |
+|---|---|
+| Invalid registration payload | HTTP 400 |
+| Invalid login payload | HTTP 400 |
+| Missing appointment fields | HTTP 400 |
+| Empty appointment update | HTTP 400 |
+| Invalid payment callback payload | HTTP 400 |
+| Non-existent API route | HTTP 404 |
+
+---
+
+## Phase 2: Server-Side AI Microservice (P1)
+
+Integrated Google's Gemini AI into the Express backend to generate AI-powered suggestions securely.
+
+### Key Implementations
+
+- Integrated the `@google/genai` Node.js SDK.
+- Created a dedicated AI service:
+  - `backend/services/aiService.js`
+- Implemented a dedicated AI API endpoint:
+
+  **POST `/api/ai/suggest`**
+
+- Secured the endpoint using JWT authentication.
+- Implemented Zod validation for AI prompts:
+  - Minimum prompt length: 5 characters.
+  - Maximum prompt length: 1000 characters.
+  - Rejects unexpected request fields.
+- Stored the Gemini API key in server-side environment variables.
+- Configured AI output token limits and request timeout.
+- Added graceful handling of AI service failures and empty responses.
+- Ensured the AI SDK executes exclusively on the backend rather than the React client.
+
+### AI Request Example
+
+**Endpoint:**
+```http
+POST /api/ai/suggest
+```
+
+**Request Body:**
+```json
+{
+  "prompt": "Suggest three general healthy lifestyle habits for improving overall wellness."
+}
+```
+
+**Successful Response:**
+```json
+{
+  "success": true,
+  "message": "AI suggestion generated successfully",
+  "suggestion": "AI-generated suggestion..."
+}
+```
+
+*The suggestion content is generated dynamically by Gemini.*
+
+---
+
+## Phase 3: Security & Throttling (P2)
+
+Implemented rate limiting and production sanitization to protect backend infrastructure and reduce unauthorized or excessive API usage.
+
+### 1. Authentication Rate Limiting
+
+- Integrated `express-rate-limit`.
+- Protected the login endpoint:
+
+  **POST `/api/auth/login`**
+
+- Maximum 5 failed login attempts within a 15-minute window per IP address.
+- Successful login requests are excluded from the failure count.
+- Returns HTTP `429 Too Many Requests` when the configured limit is exceeded.
+
+### 2. AI Rate Limiting
+
+- Protected the AI suggestion endpoint:
+
+  **POST `/api/ai/suggest`**
+
+- Maximum 10 AI requests within a 15-minute window per authenticated user.
+- Uses the authenticated user's ID as the rate-limit key.
+- Returns HTTP `429 Too Many Requests` when the limit is exceeded.
+- Helps control excessive AI API usage and protects the backend from request abuse.
+
+### 3. Production Code Sanitization
+
+- Removed all `console.log()` statements from the production backend.
+- Retained `console.error()` for server-side error diagnostics.
+- Prevented sensitive internal error details from being exposed in API responses.
+
+---
+
+## QA Testing & Verification
+
+The following tests were performed to verify Sprint 16 implementations.
+
+| Test Case | Expected Result | Status |
+|---|---|---|
+| Valid AI suggestion request | HTTP 200 with generated suggestion | Passed |
+| Unauthenticated AI request | HTTP 401 Unauthorized | Passed |
+| Prompt shorter than 5 characters | HTTP 400 Bad Request | Passed |
+| Unexpected field in AI payload | HTTP 400 Bad Request | Passed |
+| AI request after exceeding rate limit | HTTP 429 Too Many Requests | Passed |
+| Invalid registration payload | HTTP 400 Bad Request | Passed |
+| Invalid login payload | HTTP 400 Bad Request | Passed |
+| Invalid API route | HTTP 404 Not Found | Passed |
+| Invalid appointment payload | HTTP 400 Bad Request | Passed |
+| Empty appointment update | HTTP 400 Bad Request | Passed |
+| Invalid payment callback payload | HTTP 400 Bad Request | Passed |
+
+### Rate Limiting Verification
+
+Repeated AI requests were sent through Postman using an authenticated request.
+
+After reaching the configured request limit, the backend rejected further requests and returned:
+
+- HTTP Status: `429 Too Many Requests`
+- Response:
+```json
+{
+  "success": false,
+  "message": "Too many AI requests. Please try again after 15 minutes."
+}
+```
+
+This confirmed that the AI rate-limiting middleware was functioning as expected.
+
+---
+
+## Technologies & Tools Used
+
+| Technology | Purpose |
+|---|---|
+| Node.js | Backend runtime |
+| Express.js | REST API development |
+| MongoDB | Database |
+| Mongoose | MongoDB object modeling |
+| Zod | Request payload validation |
+| Google Gemini AI | AI suggestion generation |
+| `@google/genai` | Gemini Node.js SDK |
+| `express-rate-limit` | API rate limiting |
+| JWT | Authentication |
+| Postman | API testing |
+
+---
+
+## Important Backend Files
+
+```text
+backend/
+├── middleware/
+│   ├── authMiddleware.js
+│   ├── authRateLimiter.js
+│   ├── aiRateLimiter.js
+│   ├── validateRequest.js
+│   └── errorMiddleware.js
+│
+├── routes/
+│   ├── authRoutes.js
+│   └── aiRoutes.js
+│
+├── services/
+│   └── aiService.js
+│
+├── validators/
+│   └── aiValidator.js
+│
+├── server.js
+└── .env
+```
+
+*Note: The project also contains other existing backend routes, models, middleware, and validators that are not listed above.*
+
+---
+
+## Sprint 16 Outcome
+
+Successfully implemented a secure server-side AI integration using Google Gemini and strengthened the VitalSync backend with centralized error handling, strict Zod-based request validation, JWT-protected AI access, authentication and AI rate limiting, and production code sanitization.
+
+The implementation and Postman QA demonstrations verified successful AI execution, rejection of malformed payloads, and enforcement of the configured AI request limit.
+
+**Sprint 16 Status: Completed**
+
