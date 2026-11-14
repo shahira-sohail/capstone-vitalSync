@@ -11,11 +11,16 @@ const {
 } = require("./middleware/errorMiddleware");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+const allowedOrigin = "https://capstonevitalsync.vercel.app";
+
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://capstonevitalsync.vercel.app"
-    ],
+    origin: (origin, callback) => {
+        if (!origin || origin === allowedOrigin) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
 }));
 
 app.use((req, res, next) => {
