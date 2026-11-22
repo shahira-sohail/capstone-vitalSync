@@ -1,28 +1,32 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PaymentResult from "./pages/PaymentResult";
+
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const PaymentResult = lazy(() => import("./pages/PaymentResult"));
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+        <Suspense fallback={<p>Loading page...</p>}>
+            <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
 
-            <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login />} />
 
-            <Route path="/register" element={<Register />} />
-            <Route
-                path="/payment-result"
-                element={<PaymentResult />}
-            />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/payment-result"
+                    element={<PaymentResult />}
+                />
 
-            <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-            </Route>
-        </Routes>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
+            </Routes>
+        </Suspense>
     );
 }
 
