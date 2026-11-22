@@ -272,7 +272,7 @@ const [paymentError, setPaymentError] = useState("");
                     />
                     <label htmlFor="appointmentDate">Appointment Date and Time</label>
                     <input
-                        id="apppointmentDate"
+                        id="appointmentDate"
                         type="datetime-local"
                         value={formData.appointmentDate}
                         onChange={(e) => 
