@@ -37,35 +37,48 @@ function Dashboard() {
     const [deletingAppointmentId, setDeletingAppointmentId] = useState(null);
     const [deleteError, setDeleteError] = useState("");
     const [paymentLoading, setPaymentLoading] = useState(false);
-const [paymentError, setPaymentError] = useState("");
+    const [paymentError, setPaymentError] = useState("");
 
-    useEffect(() => {
-        const loadDashboard = async () => {
-            try {
-                // Verify authentication first
-                const data = await getDashboard();
-                setDashboardData(data);
-
-                // Fetch appointments separately
+        useEffect(() => {
+            const loadDashboard = async () => {
                 try {
-                    const appointmentData = await getAppointments();
-                    setAppointments(appointmentData.appointments || []);
+                // Verify authentication first
+                    const [dashboardResult, appointmentsResult] =
+                        await Promise.allSettled([
+                            getDashboard(),
+                            getAppointments(),
+                        ]);
+
+            // Authentication failure
+                    if (dashboardResult.status === "rejected") {
+                        throw dashboardResult.reason;
+                    }
+
+                    setDashboardData(dashboardResult.value);
+
+            // Appointments result
+                    if (appointmentsResult.status === "fulfilled") {
+                        setAppointments(
+                            appointmentsResult.value.appointments || []
+                        );
+                    } else {
+                        setAppointmentsError(
+                            appointmentsResult.reason.message
+                        );
+                    }
+
                 } catch (error) {
-                    setAppointmentsError(error.message);
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    navigate("/login", { replace: true });
+
+                } finally {
+                    setLoading(false);
                 }
+            };
 
-            } catch (error) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                navigate("/login", { replace: true });
-
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadDashboard();
-    }, [navigate]);
+            loadDashboard();
+        }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
