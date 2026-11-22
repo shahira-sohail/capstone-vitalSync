@@ -716,3 +716,86 @@ The implementation and Postman QA demonstrations verified successful AI executio
 
 **Sprint 16 Status: Completed**
 
+# Sprint 17: Cloud Deployment & Live Integration
+
+## Phase 1: Backend Provisioning (P0 – Mandatory)
+
+**Cloud Hosting:**
+- Deployed the Node.js/Express backend on Render.
+- Configured the production backend environment.
+- Verified successful backend deployment.
+
+**Boot Script:**
+- Configured the backend `package.json` with the required start script:
+
+```json
+"scripts": {
+  "start": "node server.js"
+}
+```
+
+- Verified that the application starts successfully on the cloud server.
+
+**Live Backend URL:**
+
+https://capstone-vitalsync.onrender.com
+
+---
+
+## Phase 2: Production Security & Network Configuration (P1 – Priority)
+
+**MongoDB Atlas Network Access:**
+- Updated MongoDB Atlas Network Access to include `0.0.0.0/0` (Global Access).
+- Enabled the deployed cloud backend to connect to the MongoDB Atlas cluster.
+
+**CORS Configuration:**
+- Replaced wildcard CORS access with an explicit origin allowlist.
+- Configured the Express backend to accept requests from the deployed frontend only.
+- Rejected requests originating from unauthorized frontend origins, including localhost.
+- Allowed requests without an Origin header for non-browser API clients.
+
+**Allowed Production Origin:**
+
+https://capstonevitalsync.vercel.app
+
+---
+
+## Phase 3: The Live Integration (P2 – Advanced)
+
+**Client Pipeline:**
+- Configured the Vercel production environment variable `VITE_API_URL` to point to the live Render backend.
+- Updated the frontend API configuration to use the deployed backend instead of the local development server.
+- Verified successful communication between the deployed React frontend and Express backend.
+
+**End-to-End Integration Testing:**
+
+Performed live integration testing using the deployed application.
+
+| Test | Result |
+|---|---|
+| Live frontend deployment | Successful |
+| Frontend-to-backend communication | Successful |
+| CORS configuration | Verified |
+| GET `/api/appointments` | 200 OK |
+| Appointment creation through frontend | Successful |
+| Appointment visibility after page refresh | Verified |
+| MongoDB Atlas persistence | Verified |
+
+**Database Verification:**
+- Created a test appointment through the deployed React frontend.
+- Verified that the appointment remained visible after refreshing the dashboard.
+- Confirmed that the newly created appointment was persisted in MongoDB Atlas.
+
+---
+
+## Deployment URLs
+
+| Component | URL |
+|---|---|
+| React Frontend (Vercel) | https://capstonevitalsync.vercel.app |
+| Node.js Backend (Render) | https://capstone-vitalsync.onrender.com |
+
+## Phase 3 Completion Status
+
+**Result:** Successfully deployed and integrated the React frontend, Node.js/Express backend, and MongoDB Atlas database. Verified live API communication and end-to-end appointment persistence.
+
