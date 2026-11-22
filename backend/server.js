@@ -23,10 +23,6 @@ app.use(cors({
     },
 }));
 
-app.use((req, res, next) => {
-    next();
-});
-
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/protected", require("./routes/protectedRoutes"));
 app.use("/api/appointments", require("./routes/appointmentRoutes"));
