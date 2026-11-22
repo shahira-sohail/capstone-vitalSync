@@ -208,7 +208,7 @@ const [paymentError, setPaymentError] = useState("");
     const user = JSON.parse(localStorage.getItem("user") || "null");
 
     return (
-        <div>
+        <main>
             <h1>VitalSync Dashboard</h1>
 
             <h2>Welcome, {user?.name}</h2>
@@ -241,7 +241,9 @@ const [paymentError, setPaymentError] = useState("");
 
                 <form onSubmit={handleCreateAppointment}>
                     <h3>{editingAppointmentId ? "Edit Appointment" : "Add New Appointment"}</h3>
+                    <label htmlFor="patientName">Patient Name</label>
                     <input
+                        id="patientName"
                         type="text"
                         placeholder="Patient Name"
                         value={formData.patientName}
@@ -254,7 +256,9 @@ const [paymentError, setPaymentError] = useState("");
                         required
                     />
 
+                    <label htmlFor="doctorName">Doctor Name</label>
                     <input 
+                        id="doctorName"
                         type="text"
                         placeholder="Doctor Name"
                         value={formData.doctorName}
@@ -266,8 +270,9 @@ const [paymentError, setPaymentError] = useState("");
                         }
                         required
                     />
-                    <label>Appointment Date and Time</label>
+                    <label htmlFor="appointmentDate">Appointment Date and Time</label>
                     <input
+                        id="apppointmentDate"
                         type="datetime-local"
                         value={formData.appointmentDate}
                         onChange={(e) => 
@@ -278,7 +283,9 @@ const [paymentError, setPaymentError] = useState("");
                         }
                         required
                     />
+                    <label htmlFor="appointmentReason">Reason for appointment</label>
                     <textarea
+                        id="appointmentReason"
                         placeholder="Reason for appointment"
                         value={formData.reason}
                         onChange={(e) =>
@@ -367,7 +374,7 @@ const [paymentError, setPaymentError] = useState("");
                     </div>
                 )}
             </section>
-        </div>
+        </main>
     );
 }
 
